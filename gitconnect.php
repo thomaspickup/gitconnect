@@ -67,7 +67,7 @@ class gitconnect_widget extends WP_Widget {
         echo $args['before_title'] . $title . $args['after_title'];
         
         // If a username isn't already set use the default of mine
-        if ( ! empty( $title ) ) 
+        if ( empty( $username ) ) 
         $username = "thomaspickup";
         
         // Gets the Users data
@@ -81,6 +81,11 @@ class gitconnect_widget extends WP_Widget {
         $repoData = json_decode($result, true);
         
         echo $userData['login'];
+        
+        if (count($repoData) == 0) {
+            echo "No Repositories";
+        }
+        
         echo $args['after_widget'];
     }
              
