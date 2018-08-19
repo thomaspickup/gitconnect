@@ -20,6 +20,28 @@ function gitconnect_load() {
 
 add_action( 'widgets_init', 'gitconnect_load' );
  
+// Pulls the repository data linked to the user
+function getUserData( $username ) {
+    $url = "https://api.github.com/users/" . $username;
+
+    $cURL = curl_init();
+
+    curl_setopt($cURL, CURLOPT_URL, $url);
+    curl_setopt($cURL, CURLOPT_HTTPGET, true);
+    curl_setopt($cURL, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+    curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ));
+
+    $result = curl_exec($cURL);
+
+    curl_close($cURL);
+
+    return $result;
+}
+
 // Creating the widget 
 class gitconnect_widget extends WP_Widget {
     function __construct() {
@@ -35,7 +57,7 @@ class gitconnect_widget extends WP_Widget {
         array( 'description' => __( 'A link between GitHub and WordPress.', 'gitconnect_domain' ), ) 
         );
     }
- 
+    
     // Creating widget front-end
     public function widget( $args, $instance ) {
         $title = apply_filters( 'widget_title', $instance['title'] );
@@ -49,16 +71,15 @@ class gitconnect_widget extends WP_Widget {
         // If a username isn't already set use the default of mine
         if ( ! empty( $title ) ) 
         $username = "thomaspickup";
-
-        echo "<br>" . $username;
+        
+        $result = getUserData($username);
+        
+        $userData = json_decode($result, true);
+        
+        echo $userData['login'];
         echo $args['after_widget'];
     }
-         
-    // Pulls the repository data linked to the user
-    public function connect($username) {
-            
-    }
-    
+             
     // Widget Backend 
     public function form( $instance ) {
         if ( isset( $instance[ 'title' ] ) ) {
