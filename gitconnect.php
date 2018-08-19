@@ -21,9 +21,7 @@ function gitconnect_load() {
 add_action( 'widgets_init', 'gitconnect_load' );
  
 // Pulls the repository data linked to the user
-function getUserData( $username ) {
-    $url = "https://api.github.com/users/" . $username;
-
+function getJSON( $username, $url ) {
     $cURL = curl_init();
 
     curl_setopt($cURL, CURLOPT_URL, $url);
@@ -63,7 +61,7 @@ class gitconnect_widget extends WP_Widget {
         $title = apply_filters( 'widget_title', $instance['title'] );
         $username = $instance['username'];
         
-        // before and after widget arguments are defined by themes
+        // Before and after widget arguments are defined by themes
         echo $args['before_widget'];
         if ( ! empty( $title ) )
         echo $args['before_title'] . $title . $args['after_title'];
@@ -72,9 +70,15 @@ class gitconnect_widget extends WP_Widget {
         if ( ! empty( $title ) ) 
         $username = "thomaspickup";
         
-        $result = getUserData($username);
-        
+        // Gets the Users data
+        $url = "https://api.github.com/users/" . $username;
+        $result = getJSON($username, $url);
         $userData = json_decode($result, true);
+        
+        // Gets the repository data
+        $url = "https://api.github.com/users/" . $username . "/repos";
+        $result = getJSON($username, $url);
+        $repoData = json_decode($result, true);
         
         echo $userData['login'];
         echo $args['after_widget'];
