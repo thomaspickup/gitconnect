@@ -75,15 +75,21 @@ class gitconnect_widget extends WP_Widget {
         $result = getJSON($username, $url);
         $userData = json_decode($result, true);
         
+        if ($userData['message'] == "Not Found") {
+            echo ".... Help, I don't exist!" . "</br>";
+        }
+        
         // Gets the repository data
         $url = "https://api.github.com/users/" . $username . "/repos";
         $result = getJSON($username, $url);
         $repoData = json_decode($result, true);
         
+        // User Output
         echo $userData['login'];
         
-        if (count($repoData) == 0) {
-            echo "No Repositories";
+        // Repository Output
+        if ($repoData['message'] == "Not Found" || count($repoData) == 0) {
+            echo "No Repositories" . "</br>";
         }
         
         echo $args['after_widget'];
