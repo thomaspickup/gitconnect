@@ -85,7 +85,16 @@ class gitconnect_widget extends WP_Widget {
         $repoData = json_decode($result, true);
         
         // User Output
-        echo $userData['login'];
+        echo "<p>";
+        echo "<img src='" . $userData['avatar_url'] . "'/>";
+        echo "<h1>" . $userData['name'] . "</h1>";
+        echo "<i><a href='" . $userData['html_url'] . "'>" . $userData['login'] . "</a></i>";
+        echo "<br>" . $userData['bio'];
+        echo "</p>";
+        echo "<hr>";
+        echo "<p>";
+        echo "</p>";
+        
         
         // Repository Output
         if ($repoData['message'] == "Not Found" || count($repoData) == 0) {
